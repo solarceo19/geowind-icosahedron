@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoWind — Icosahedron Wing System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090e;
+  --surface:rgba(255,255,255,0.03);
+  --border:rgba(255,255,255,0.07);
+  --text:#e8e6df;
+  --muted:rgba(232,230,223,0.45);
+  --gold:#c9a84c;
+  --teal:#3ecfb2;
+  --red:#e05555;
+  --blue:#5b9bd5;
+  --green:#7ec87e;
+}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  border-bottom:1px solid var(--border);
+  background:rgba(9,9,14,0.92);
+  backdrop-filter:blur(12px);
+  padding:0 32px;
+}
+.nav-inner{
+  max-width:1200px;margin:0 auto;
+  height:56px;display:flex;
+  align-items:center;
+}
+.logo{
+  font-family:'DM Serif Display',serif;
+  font-size:20px;letter-spacing:0.02em;
+}
+
+/* HERO */
+.hero{
+  position:relative;z-index:1;
+  min-height:calc(100vh - 56px);
+  display:flex;align-items:center;
+  overflow:hidden;
+}
+.hero-glow{
+  position:absolute;top:20%;right:0;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:1200px;margin:0 auto;
+  padding:60px 32px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:48px;
+  align-items:center;
+  width:100%;
+}
+.hero-tag{
+  font-size:10px;letter-spacing:0.2em;
+  color:rgba(201,168,76,0.8);
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+.hero-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(36px,4vw,58px);
+  line-height:1.1;
+  margin-bottom:20px;
+  font-weight:400;
+}
+.hero-title em{
+  font-style:italic;
+  color:rgba(232,230,223,0.7);
+}
+.hero-desc{
+  font-size:14px;
+  color:rgba(232,230,223,0.55);
+  line-height:1.8;
+  max-width:440px;
+  margin-bottom:40px;
+}
+.specs{
+  display:flex;gap:24px;
+  padding-top:32px;
+  border-top:1px solid var(--border);
+}
+.spec-val{
+  font-size:18px;font-weight:500;
+  color:var(--text);letter-spacing:-0.01em;
+}
+.spec-unit{
+  font-size:12px;color:rgba(201,168,76,0.8);margin-left:2px;
+}
+.spec-label{
+  font-size:10px;color:rgba(232,230,223,0.4);
+  letter-spacing:0.08em;margin-top:3px;
+  text-transform:uppercase;
+}
+
+/* CANVAS */
+.canvas-wrap{
+  display:flex;flex-direction:column;
+  align-items:center;gap:12px;
+}
+canvas{display:block;cursor:grab;}
+canvas:active{cursor:grabbing;}
+.canvas-hint{
+  font-size:10px;color:rgba(232,230,223,0.3);
+  letter-spacing:0.12em;text-transform:uppercase;
+}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:24px 32px;
+}
+.footer-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;justify-content:space-between;
+  align-items:center;
+  font-size:11px;color:var(--muted);
+}
+.footer-logo{
+  font-family:'DM Serif Display',serif;
+  font-size:16px;color:rgba(232,230,223,0.6);
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .hero-inner{
+    grid-template-columns:1fr;
+    padding:32px 20px;
+    gap:32px;
+  }
+  .hero-glow{display:none;}
+  .specs{gap:16px;flex-wrap:wrap;}
+  footer{padding:20px;}
+  .footer-inner{flex-direction:column;gap:8px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="logo">GeoWind</span>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">Urban Wind · VAWT · Modular</div>
+      <h1 class="hero-title">
+        Power your site<br>
+        <em>with quiet urban wind.</em>
+      </h1>
+      <p class="hero-desc">
+        A compact vertical-axis turbine on a rigid icosahedron frame.
+        Designed for rooftops, campuses, and ports — places traditional turbines rarely fit.
+      </p>
+      <div class="specs">
+        <div>
+          <div class="spec-val">≤45<span class="spec-unit">dB</span></div>
+          <div class="spec-label">Low-noise</div>
+        </div>
+        <div>
+          <div class="spec-val">≈4<span class="spec-unit">m/s</span></div>
+          <div class="spec-label">Cut-in speed</div>
+        </div>
+        <div>
+          <div class="spec-val">TSR&lt;1</div>
+          <div class="spec-label">Tip speed ratio</div>
+        </div>
+        <div>
+          <div class="spec-val">φ/2·ℓ</div>
+          <div class="spec-label">Decagon radius</div>
+        </div>
+      </div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="c"></canvas>
+      <div class="canvas-hint">드래그하여 회전 · R = φ/2 · ℓ</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">GeoWind</span>
+    <span>© 2026 GeoWind Inc. · Seoul, Korea</span>
+    <span>DCGE-D-26-00035 · YoungJune Jeon</span>
+  </div>
+</footer>
+
+<script>
+const phi=(1+Math.sqrt(5))/2;
+
+// 논문 Definition 2 완전 검증 좌표
+const RAW_VERTS=[
+  [0,1,phi],   [0,-1,-phi],  // N, S
+  [0,-1,phi],  [phi,0,1],    // U1, U2
+  [1,phi,0],   [-1,phi,0],   // U3, U4
+  [-phi,0,1],                // U5
+  [1,-phi,0],  [phi,0,-1],   // L1, L2
+  [0,1,-phi],  [-phi,0,-1],  // L3, L4
+  [-1,-phi,0]                // L5
+];
+
+// F_S(i)=△(S,Ui,Li): S-U=φℓ, S-L=ℓ, U-L=ℓ → 36-36-108° ✓
+// F_N(i)=△(N,Ui,Li-1): N-U=ℓ, U-L=ℓ, N-L=φℓ → 36-36-108° ✓
+const WINGS_S=[[1,2,7],[1,3,8],[1,4,9],[1,5,10],[1,6,11]];
+const WINGS_N=[[0,2,11],[0,3,7],[0,4,8],[0,5,9],[0,6,10]];
+const ALL_WINGS=[...WINGS_N,...WINGS_S];
+
+function rotateVerts(rx,ry){
+  const cx=Math.cos(rx),sx=Math.sin(rx),cy=Math.cos(ry),sy=Math.sin(ry);
+  return RAW_VERTS.map(([x,y,z])=>{
+    const y2=y*cx-z*sx,z2=y*sx+z*cx;
+    return [x*cy+z2*sy, y2, -x*sy+z2*cy];
+  });
+}
+
+function getEdges(v){
+  const e=[];
+  for(let i=0;i<12;i++) for(let j=i+1;j<12;j++){
+    const d=(v[i][0]-v[j][0])**2+(v[i][1]-v[j][1])**2+(v[i][2]-v[j][2])**2;
+    if(Math.abs(d-4)<0.01) e.push([i,j]);
+  }
+  return e;
+}
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let W,H,SC,CX,CY;
+
+function resize(){
+  const isMobile=window.innerWidth<768;
+  const size=isMobile
+    ? Math.min(window.innerWidth-40, 360)
+    : Math.min(window.innerWidth*0.42, 520);
+  W=H=Math.max(size,260);
+  SC=W*0.3;
+  CX=W/2; CY=H/2;
+  canvas.width=W; canvas.height=H;
+}
+resize();
+window.addEventListener('resize',()=>{resize();draw();});
+
+let rotX=0.38,rotY=-0.28,autoY=0;
+let dragging=false,lastX=0,lastY=0;
+
+function proj(v){return[CX+SC*v[0],CY-SC*v[1]];}
+
+function draw(){
+  const verts=rotateVerts(rotX,rotY+autoY);
+  const edges=getEdges(verts);
+  const pts=verts.map(v=>proj(v));
+  ctx.clearRect(0,0,W,H);
+
+  // 엣지
+  edges.forEach(([a,b])=>{
+    const front=verts[a][2]>-0.3||verts[b][2]>-0.3;
+    ctx.beginPath();ctx.moveTo(...pts[a]);ctx.lineTo(...pts[b]);
+    ctx.strokeStyle=front?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.04)';
+    ctx.lineWidth=front?0.8:0.5;
+    ctx.setLineDash(front?[]:[3,4]);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // 날개면 (z-sort)
+  const ws=ALL_WINGS.map((w,i)=>({w,i,z:(verts[w[0]][2]+verts[w[1]][2]+verts[w[2]][2])/3}));
+  ws.sort((a,b)=>a.z-b.z);
+  ws.forEach(({w,i})=>{
+    const isN=i<5;
+    const [A,B,C]=w.map(idx=>pts[idx]);
+    ctx.beginPath();ctx.moveTo(...A);ctx.lineTo(...B);ctx.lineTo(...C);ctx.closePath();
+    ctx.fillStyle=isN?'rgba(201,168,76,0.35)':'rgba(62,207,178,0.35)';
+    ctx.fill();
+    ctx.strokeStyle=isN?'rgba(201,168,76,0.7)':'rgba(62,207,178,0.65)';
+    ctx.lineWidth=1.2;ctx.stroke();
+  });
+
+  // 적도 십각형
+  const mids=ALL_WINGS.map(w=>{
+    const o=w.slice(1);
+    const m=[(verts[o[0]][0]+verts[o[1]][0])/2,(verts[o[0]][1]+verts[o[1]][1])/2,(verts[o[0]][2]+verts[o[1]][2])/2];
+    return{pt:proj(m),z:m[2]};
+  });
+  mids.sort((a,b)=>Math.atan2(a.pt[1]-CY,a.pt[0]-CX)-Math.atan2(b.pt[1]-CY,b.pt[0]-CX));
+  ctx.beginPath();mids.forEach(({pt},i)=>{i===0?ctx.moveTo(...pt):ctx.lineTo(...pt);});
+  ctx.closePath();
+  ctx.strokeStyle='rgba(201,168,76,0.4)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+  mids.forEach(({pt,z})=>{
+    ctx.beginPath();ctx.arc(...pt,z>0?4:2.5,0,Math.PI*2);
+    ctx.fillStyle=z>0?'rgba(201,168,76,0.9)':'rgba(201,168,76,0.3)';ctx.fill();
+  });
+
+  // NS 축
+  ctx.beginPath();ctx.moveTo(...pts[0]);ctx.lineTo(...pts[1]);
+  ctx.strokeStyle='rgba(224,85,85,0.4)';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+
+  // 꼭짓점
+  verts.forEach((v,i)=>{
+    if(v[2]<-0.6)return;
+    const[px,py]=pts[i];
+    ctx.beginPath();ctx.arc(px,py,i<2?6:3.5,0,Math.PI*2);
+    ctx.fillStyle=i<2?'#e05555':i<7?'#5b9bd5':'#7ec87e';
+    ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.6)';ctx.lineWidth=1.2;ctx.stroke();
+  });
+}
+
+// 자동 회전
+let raf;
+function loop(){autoY+=0.005;draw();raf=requestAnimationFrame(loop);}
+
+// 마우스
+canvas.addEventListener('mousedown',e=>{dragging=true;lastX=e.offsetX;lastY=e.offsetY;cancelAnimationFrame(raf);});
+canvas.addEventListener('mousemove',e=>{if(!dragging)return;rotY+=(e.offsetX-lastX)*0.01;rotX+=(e.offsetY-lastY)*0.01;lastX=e.offsetX;lastY=e.offsetY;draw();});
+canvas.addEventListener('mouseup',()=>{dragging=false;loop();});
+canvas.addEventListener('mouseleave',()=>{if(dragging){dragging=false;loop();}});
+
+// 터치
+canvas.addEventListener('touchstart',e=>{dragging=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;cancelAnimationFrame(raf);e.preventDefault();},{passive:false});
+canvas.addEventListener('touchmove',e=>{if(!dragging)return;rotY+=(e.touches[0].clientX-lastX)*0.01;rotX+=(e.touches[0].clientY-lastY)*0.01;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;draw();e.preventDefault();},{passive:false});
+canvas.addEventListener('touchend',()=>{dragging=false;loop();});
+
+loop();
+</script>
+</body>
+</html>
