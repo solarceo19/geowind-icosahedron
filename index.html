@@ -267,7 +267,7 @@ function resize(){
     ? Math.min(window.innerWidth-40, 360)
     : Math.min(window.innerWidth*0.42, 520);
   W=H=Math.max(size,260);
-  SC=W*0.3;
+  SC=W*0.26;
   CX=W/2; CY=H/2;
   canvas.width=W; canvas.height=H;
 }
@@ -290,7 +290,7 @@ function draw(){
     const front=verts[a][2]>-0.3||verts[b][2]>-0.3;
     ctx.beginPath();ctx.moveTo(...pts[a]);ctx.lineTo(...pts[b]);
     ctx.strokeStyle=front?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.04)';
-    ctx.lineWidth=front?0.8:0.5;
+    ctx.lineWidth=front?2:0.8;
     ctx.setLineDash(front?[]:[3,4]);
     ctx.stroke();
   });
@@ -306,7 +306,7 @@ function draw(){
     ctx.fillStyle=isN?'rgba(201,168,76,0.35)':'rgba(62,207,178,0.35)';
     ctx.fill();
     ctx.strokeStyle=isN?'rgba(201,168,76,0.7)':'rgba(62,207,178,0.65)';
-    ctx.lineWidth=1.2;ctx.stroke();
+    ctx.lineWidth=1.8;ctx.stroke();
   });
 
   // 적도 십각형
@@ -326,7 +326,7 @@ function draw(){
 
   // NS 축
   ctx.beginPath();ctx.moveTo(...pts[0]);ctx.lineTo(...pts[1]);
-  ctx.strokeStyle='rgba(224,85,85,0.4)';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(224,85,85,0.85)';ctx.lineWidth=2.5;ctx.setLineDash([6,4]);ctx.stroke();ctx.setLineDash([]);
 
   // 꼭짓점
   verts.forEach((v,i)=>{
@@ -335,7 +335,7 @@ function draw(){
     ctx.beginPath();ctx.arc(px,py,i<2?6:3.5,0,Math.PI*2);
     ctx.fillStyle=i<2?'#e05555':i<7?'#5b9bd5':'#7ec87e';
     ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.6)';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.strokeStyle='rgba(0,0,0,0.6)';ctx.lineWidth=1.8;ctx.stroke();
   });
 }
 
